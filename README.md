@@ -251,3 +251,4 @@ If you are using `CLion`, the google test will automatically detected.
 
 Visual studio also support cmake
 # math
+# python
