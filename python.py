@@ -65,4 +65,4 @@ while True:
     else:
         logging.error("Failed to process JSON data")
     
-    time.sleep(10000)
+    time.sleep(1)
