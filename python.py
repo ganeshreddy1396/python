@@ -18,7 +18,7 @@ def parse_xml(file_path):
         return None
 
 # Specify the path to your Jenkins XML file
-jenkins_xml_file_path = 'http://54.90.93.109:8080/job/Math/5/execution/node/3/ws/cppcheck-results.xml'
+jenkins_xml_file_path = 'http://35.170.245.42:8080/job/Math/10/execution/node/3/ws/cppcheck-results.xml'
 
 # Start Prometheus HTTP server
 start_http_server(8000)  # Expose metrics on port 8000
