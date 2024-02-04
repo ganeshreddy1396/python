@@ -1,6 +1,6 @@
-import xml.etree.ElementTree as ET
 from prometheus_client import start_http_server, Gauge
 import time
+import xml.etree.ElementTree as ET
 import json
 
 # Create Prometheus metric
@@ -25,7 +25,7 @@ def xml_to_json(file_path):
         return None
 
 # Specify the path to your Jenkins XML file
-jenkins_xml_file_path = 'http://35.170.245.42:8080/job/Math/6/execution/node/3/ws/cppcheck-results.xml'
+jenkins_xml_file_path = '/var/lib/jenkins/workspace/Math/cppcheck-results.xml'
 
 # Start Prometheus HTTP server
 start_http_server(8000)  # Expose metrics on port 8000
@@ -33,5 +33,7 @@ start_http_server(8000)  # Expose metrics on port 8000
 while True:
     json_data = xml_to_json(jenkins_xml_file_path)
     if json_data is not None:
-        metric.set(json_data)
+        # Here you should handle the conversion of json_data to a numeric value if necessary
+        # metric.set(converted_value)
+        pass
     time.sleep(1)
