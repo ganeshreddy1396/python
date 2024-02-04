@@ -36,4 +36,4 @@ while True:
         # Here you should handle the conversion of json_data to a numeric value if necessary
         # metric.set(converted_value)
         pass
-    time.sleep(1)
+    time.sleep(10000)
