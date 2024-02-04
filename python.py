@@ -1,37 +1,57 @@
-import xml.etree.ElementTree as ET
 from prometheus_client import start_http_server, Gauge
 import time
+import xml.etree.ElementTree as ET
+import json
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+# Create Prometheus metric for demonstration (assuming you have numeric values to monitor)
+numeric_metric = Gauge('completeness', 'A sample numeric metric from JSON')
+
+# Function to parse XML and convert it to JSON
+def xml_to_json(file_path):
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+
+        # Convert XML data to a dictionary
+        xml_data = {}
+        for element in root:
+            xml_data[element.tag] = element.text
+
+        # Convert dictionary to JSON
+        json_data = json.dumps(xml_data)
+        return json_data
+    except Exception as e:
+        logging.error(f"Error parsing XML: {e}")
+        return None
 
 # Specify the path to your XML file
 xml_file_path = '/var/lib/jenkins/workspace/Math/cppcheck-results.xml'
 
-# Create a Prometheus Gauge metric
-metric = Gauge('completeness', 'percentage of static code analyzed in code')
+# Start Prometheus HTTP server
+start_http_server(8000)  # Expose metrics on port 8000
+logging.info("Prometheus HTTP server started on port 8000")
 
 while True:
-    try:
-        tree = ET.parse(xml_file_path)
-        root = tree.getroot()
+    json_data = xml_to_json(xml_file_path)
+    if json_data is not None:
+        # Log the JSON data (Prometheus doesn't handle raw JSON)
+        logging.info(f"JSON data: {json_data}")
 
-        # Assuming you want to extract a specific element from the XML
-        for child in root:
-            for grand_c in child:
-                parsed_value = grand_c.text
-                break  # Assuming you only need the first value
+        # Assuming you have numeric data in your JSON, extract and use it
+        # This is just a placeholder example
+        data_dict = json.loads(json_data)
+        numeric_value = data_dict.get('numeric_key')  # Replace 'numeric_key' with your actual key
+        if numeric_value and isinstance(numeric_value, (int, float)):
+            numeric_metric.set(numeric_value)
+        else:
+            logging.warning("Numeric value is missing or not a number")
 
-        # Ensure that parsed_value contains valid data
-        if parsed_value:
-            parsed_value = parsed_value[-10:]  # Adjust the slicing as needed
+    else:
+        logging.error("Failed to process XML to JSON")
 
-            # Set the metric value
-            metric.set(float(parsed_value))
-            print(f'Parsed Value: {parsed_value}')
+    time.sleep(100)  # Sleep for 10 seconds before next iteration
 
-    except Exception as e:
-        print(f'Error: {str(e)}')
-
-    # Sleep for a while before checking the XML file again (adjust the sleep time as needed)
-    time.sleep(1000)
-
-# Start the Prometheus HTTP server (this should be outside the loop)
-start_http_server(8000)  # 9090 is the Prometheus server port
